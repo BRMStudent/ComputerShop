@@ -9,8 +9,8 @@ import { ComboSet, ComboSetItem, ComboSetOutput } from 'src/model/comboSet';
 export class ComboSetService {
 
   constructor(private http: HttpClient) { }
-  private endPoints = "https://localhost:7157/api/ComboSets"
-  private itemEndPoints = "https://localhost:7157/api/ComboSets/items"
+  private endPoints = "http://202.28.34.197:9202/api/ComboSets"
+  private itemEndPoints = "http://202.28.34.197:9202/api/ComboSets/items"
 
   async getComboSets(approve?: boolean) {
     if (approve != null) {

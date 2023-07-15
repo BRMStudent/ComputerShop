@@ -9,7 +9,7 @@ import { LoginDto } from 'src/model/loginDto';
 })
 export class EmployeeService {
   constructor(private http: HttpClient) { }
-  private endPoints = "https://localhost:7157/api/Employees"
+  private endPoints = "http://202.28.34.197:9202/api/Employees"
 
   async login(loginDto: LoginDto) {
     return await firstValueFrom(this.http.post<Employee>(this.endPoints + "/login", loginDto));

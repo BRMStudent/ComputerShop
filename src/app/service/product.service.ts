@@ -8,7 +8,7 @@ import { Product, ProductType } from 'src/model/product';
 })
 export class ProductService {
   constructor(private http: HttpClient) { }
-  private endPoints = "https://localhost:7157/api/Products"
+  private endPoints = "http://202.28.34.197:9202/api/Products"
 
   async getProducts() {
     return await firstValueFrom(this.http.get<Product[]>(this.endPoints))

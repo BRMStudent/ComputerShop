@@ -33,7 +33,10 @@ export class LoginComponent {
       default: console.error("login failed");
         break
     }
+  }
 
+  byQrCode() {
+    this.router.navigateByUrl('/qrproduct')
   }
 
 }

@@ -19,7 +19,7 @@ export class QrproductComponent implements OnInit {
   qrdata = '';
   ngOnInit(): void {
 
-    this.http.get('../../assets/products.json').subscribe(data => {
+    this.http.get('http://202.28.34.197:9202/api/Products').subscribe(data => {
       this.products = arrayShuffle(<Product[]>data)
       console.log(this.products);
       

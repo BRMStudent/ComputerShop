@@ -25,7 +25,7 @@ export class CustomerComponent implements OnInit {
   selectedCustomer: Customer = { id: 0, name: '', phone: '' }
 
   orders: OrderOutput[] = []
-  
+
   selectedOrder?:OrderOutput
   orderItems:Item[] = []
 
@@ -71,6 +71,8 @@ export class CustomerComponent implements OnInit {
   }
 
   async selectOrder() {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    
     this.orderItems = this.selectedOrder?.items!
     this.isOrderDialog = true
   }
