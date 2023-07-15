@@ -1,0 +1,193 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 my-1">
+            <div class="d-flex">
+                <p-button icon="pi pi-refresh" class="me-3" styleClass="p-button-secondary"
+                    (onClick)="refresh()"></p-button>
+                <button pButton type="button" [style]="{'width':'100%'}" label="เพิ่มสินค้า"
+                    (click)="showAddDialog()"></button>
+            </div>
+
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-3 my-1 d-flex justify-content-between">
+            <input pInputText placeholder="ค้นหาจากชื่อหรือรหัส" [style]="{'width':'100%'}" (input)="searchProducts()"
+                [(ngModel)]="searchText" />
+        </div>
+        <div class="col-sm-3 my-1">
+            <p-dropdown [options]="productTypes" [(ngModel)]="selectedType" optionLabel="name" optionValue="id"
+                [style]="{'width':'100%'}" (ngModelChange)="getProductsByType()" placeholder="ประเภท"></p-dropdown>
+        </div>
+    </div>
+    <div class="row">
+        <div *ngFor="let product of pageSlice" class="col-sm-3 my-2">
+            <div class="card" style="height: 100%; cursor: pointer;" (click)="showUpdateDialog(product)">
+                <img src="{{product.image}}" class="card-img-top" alt="{{product.name}}">
+                <div class="card-body">
+                    <h3 class="card-title">{{product.name}}</h3>
+                    <h4 style="margin: 0;" class="text-muted">ราคา {{product.unitPrice | number}} ฿</h4>
+                    <h5 class=" text-muted">คงเหลือ {{product.remain | number}} ชิ้น</h5>
+                    <h5 class="card-text description">{{product.description}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-sm-12">
+            <mat-paginator nextPageLabel="" previousPageLabel="" [length]="products.length" [pageSize]="20"
+                hidePageSize="true" [pageIndex]="pageIndex" (page)="onPageChanged($event)">
+            </mat-paginator>
+
+        </div>
+    </div>
+</div>
+
+<div class="container dialog-update-product">
+    <p-dialog header="{{selectedProduct.name}}" [(visible)]="isOpenUpdateDialog" [modal]="true" [draggable]="false"
+        [resizable]="false">
+        <ng-template pTemplate="content">
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="row text-center">
+                        <div class="col-sm-3 my-1">
+                            <p-image src="{{selectedProduct.image}}" alt="{{selectedProduct.name}}"
+                                width="100%"></p-image>
+                        </div>
+                        <div class="col-sm-9 my-1 px-2">
+                            <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+                                <div class="text-start mt-2">
+                                    <label>รหัสสินค้า</label>
+                                    <input disabled="true" class="my-1" pInputText placeholder="รหัสสินค้า"
+                                        style="width: 100%;" [(ngModel)]="selectedProduct.productId" />
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>ชื่อสินค้า</label>
+                                    <input class="my-1" pInputText placeholder="ชื่อสินค้า" style="width: 100%;"
+                                        [(ngModel)]="selectedProduct.name" />
+                                </div>
+
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-6">
+                                        <label>ราคาสินค้า</label>
+                                        <input class="my-1" pInputText placeholder="ราคาสินค้า" style="width: 100%;"
+                                            [(ngModel)]="selectedProduct.unitPrice" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>คงเหลือ</label><br>
+                                        <p-inputNumber [(ngModel)]="selectedProduct.remain" [showButtons]="true"
+                                            buttonLayout="horizontal" [style]="{width: '100%;'}" [step]="1"
+                                            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-info"
+                                            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
+                                        </p-inputNumber>
+                                    </div>
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>รายละเอียดสินค้า</label>
+                                    <textarea rows="5" cols="30" placeholder="รายละเอียดสินค้า" [autoResize]="true"
+                                        pInputTextarea [(ngModel)]="selectedProduct.description" style="width: 100%;">
+                                    </textarea>
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>ลิงค์รูปภาพ</label>
+                                    <input disabled="true" class="my-1" pInputText placeholder="ชื่อสินค้า"
+                                        style="width: 100%;" [(ngModel)]="selectedProduct.image" />
+                                </div>
+                            </p-scrollPanel>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="row mt-3 ">
+                <div class="col-sm-12 my-1  d-flex justify-content-between align-items-center">
+                    <p-button label="ลบสินค้า" styleClass="p-button-danger" (onClick)="deleteProduct()"></p-button>
+                    <div>
+                        <p-button label="พิมพ์คิวอาร์โค๊ด" icon="pi pi-qrcode" styleClass="p-button-info"></p-button>
+                        <button pButton type="button" label="อัพเดตสินค้า" (click)="updateProduct()"></button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>
+
+<div class="container dialog-add-product">
+    <p-dialog header="เพิ่มสินค้า" [(visible)]="isOpenAddDialog" [modal]="true" [draggable]="false" [resizable]="false">
+        <ng-template pTemplate="content">
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="row text-center">
+                        <div class="col-sm-12 my-1 px-2">
+                            <p-scrollPanel [style]="{ width: '100%'}">
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-6">
+                                        <label>รหัสสินค้า</label>
+                                        <input class="my-1" type="number" pInputText placeholder="รหัสสินค้า"
+                                            style="width: 100%;" [(ngModel)]="selectedProduct.productId" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>ประเภทสินค้า</label>
+                                        <div class="my-1">
+                                            <p-dropdown [options]="newProductTypes" [(ngModel)]="selectedType"
+                                                optionLabel="name" optionValue="id" [style]="{'width':'100%'}"
+                                                placeholder="ประเภทสินค้า"></p-dropdown>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>ชื่อสินค้า</label>
+                                    <input class="my-1" pInputText placeholder="ชื่อสินค้า" style="width: 100%;"
+                                        [(ngModel)]="selectedProduct.name" />
+                                </div>
+
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-6">
+                                        <label>ราคาสินค้า</label>
+                                        <input class="my-1" type="number" step="100" pInputText placeholder="ราคาสินค้า"
+                                            style="width: 100%;" [(ngModel)]="selectedProduct.unitPrice" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>คงเหลือ</label><br>
+                                        <div class="my-1 pe-3">
+                                            <p-inputNumber [(ngModel)]="selectedProduct.remain" [showButtons]="true"
+                                                buttonLayout="horizontal" [step]="1"
+                                                decrementButtonClass="p-button-danger"
+                                                incrementButtonClass="p-button-info" [min]="0"
+                                                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
+                                            </p-inputNumber>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>รายละเอียดสินค้า</label>
+                                    <textarea rows="5" cols="30" placeholder="รายละเอียดสินค้า" [autoResize]="true"
+                                        pInputTextarea [(ngModel)]="selectedProduct.description" style="width: 100%;">
+                                    </textarea>
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>ลิงค์รูปภาพ</label>
+                                    <input class="my-1" pInputText placeholder="ลิงค์รูปภาพ" style="width: 100%;"
+                                        [(ngModel)]="selectedProduct.image" />
+                                </div>
+                            </p-scrollPanel>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="row mt-3 ">
+                <div class="col-sm-12 my-1 text-end">
+                    <button pButton type="button" label="เพิ่มสินค้า" (click)="addProduct()"></button>
+                </div>
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>

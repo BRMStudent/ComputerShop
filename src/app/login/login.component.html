@@ -1,0 +1,25 @@
+<div class="main">
+    <p-card header="เข้าสู่ระบบ" [style]="{ width: '360px' }">
+
+
+        <ng-template pTemplate="content">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <input pInputText placeholder="ชื่อผู้ใช้" [(ngModel)]="loginDto.username" [style]="{'width':'100%'}" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <input pInputText placeholder="รหัสผ่าน" type="password" [(ngModel)]="loginDto.password" [style]="{'width':'100%'}" />
+                </div>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p-button label="ล็อกอิน" [style]="{'width':'100%'}" (onClick)="login()"></p-button>
+                </div>
+            </div>
+        </ng-template>
+    </p-card>
+</div>

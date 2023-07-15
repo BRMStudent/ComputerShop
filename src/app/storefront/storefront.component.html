@@ -1,0 +1,110 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 text-start">
+            <p-button icon="pi pi-refresh" styleClass="p-button-secondary" (onClick)="refresh()"></p-button>
+        </div>
+        <div class="col-sm-3 my-1">
+            <input pInputText placeholder="ค้นหาจากชื่อหรือรหัส" [style]="{'width':'100%'}" (input)="searchProducts()"
+                [(ngModel)]="searchText" />
+        </div>
+        <div class="col-sm-3 my-1">
+            <p-dropdown [options]="productTypes" [(ngModel)]="selectedType" optionLabel="name" optionValue="id"
+                [style]="{'width':'100%'}" (ngModelChange)="getProductsByType()" placeholder="ประเภท"></p-dropdown>
+        </div>
+    </div>
+    <div class="row">
+        <div *ngFor="let product of pageSlice" class="col-sm-3 my-2">
+            <div class="card" style="height: 100%; cursor: pointer;" (click)="showDialog(product)">
+                <img src="{{product.image}}" class="card-img-top" alt="{{product.name}}">
+                <div class="card-body">
+                    <h3 class="card-title">{{product.name}}</h3>
+                    <h4 style="margin: 0;" class="text-muted">ราคา {{product.unitPrice | number}} ฿</h4>
+                    <h5 class=" text-muted">คงเหลือ {{product.remain | number}} ชิ้น</h5>
+                    <h5 class="card-text description">{{product.description}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <mat-paginator nextPageLabel="" previousPageLabel="" [length]="products.length" [pageSize]="20"
+            hidePageSize="true" [pageIndex]="pageIndex" (page)="onPageChanged($event)">
+        </mat-paginator>
+
+    </div>
+</div>
+
+<p-dialog header="เลือกจำนวน" [(visible)]="isOpenAddDialog" [modal]="true" [style]="{ width: '25vw' }"
+    [draggable]="false" [resizable]="false">
+    <div class="text-center">
+        <div class="row">
+            <div class="col-12">
+                <p-image src="{{this.selectedProduct?.image}}" alt="{{this.selectedProduct?.name}}"
+                    width="250"></p-image>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12 text-start">
+                {{this.selectedProduct?.name}}
+            </div>
+        </div>
+        <div class="row my-5 d-flex align-items-center">
+            <div class="col-3">
+                <p-button icon="pi pi-minus" styleClass="p-button-rounded" (onClick)="minus()"></p-button>
+            </div>
+            <div class="col-6" style="font-size: 84px;">{{quantity | number}}</div>
+            <div class="col-3">
+                <p-button icon="pi pi-plus" styleClass="p-button-rounded" (onClick)="plus()"></p-button>
+
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <p-button label="เพิ่มสินค้าลงตะกร้า" (onClick)="addItem()" [style]="{'width':'90%'}"
+                    icon="pi pi-check"></p-button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="อัพเดตตะกร้าสินค้า" [(visible)]="isOpenUpdateDialog" [modal]="true" [style]="{ width: '25vw' }"
+    [draggable]="false" [resizable]="false">
+    <div class="text-center">
+        <div class="row">
+            <div class="col-12">
+                <p-image src="{{this.selectedProduct?.image}}" alt="{{this.selectedProduct?.name}}"
+                    width="250"></p-image>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12 text-start">
+                {{this.selectedProduct?.name}}
+            </div>
+        </div>
+        <div class="row my-5 d-flex align-items-center">
+            <div class="col-3">
+                <p-button icon="pi pi-minus" styleClass="p-button-rounded" (onClick)="minus()"></p-button>
+            </div>
+            <div class="col-6" style="font-size: 84px;">{{quantity | number}}</div>
+            <div class="col-3">
+                <p-button icon="pi pi-plus" styleClass="p-button-rounded" (onClick)="plus()"></p-button>
+
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <p-button label="อัพเดตตะกร้าสินค้า" (onClick)="updateItem()" [style]="{'width':'90%'}"
+                    icon="pi pi-check"></p-button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p-button label="นำสินค้าออกจากตะกร้า" (onClick)="removeItem()" [style]="{'width':'90%'}"
+                    styleClass="p-button-danger" icon="pi pi-trash"></p-button>
+            </div>
+        </div>
+    </div>
+
+</p-dialog>

@@ -1,0 +1,173 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 my-1">
+            <div class="d-flex">
+                <p-button icon="pi pi-refresh" class="me-3" styleClass="p-button-secondary" (onClick)="refresh()"></p-button>
+                <button pButton type="button" [style]="{'width':'100%'}" (click)="showAddDialog()"
+                    label="เพิ่มข้อมูลพนักงาน"></button>
+            </div>
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-sm-12"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 my-2">
+            <p-splitter [style]="{ width: '100%' }">
+                <ng-template pTemplate>
+                    <p-table [value]="employees" selectionMode="single" [paginator]="true"
+                        [showCurrentPageReport]="true" [rows]="7" [(selection)]="selectedEmployee"
+                        [tableStyle]="{'min-width': '50rem'}">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">รหัสพนักงาน</th>
+                                <th class="text-center">ชื่อ</th>
+                                <th class="text-center">ชื่อผู้ใช้</th>
+                                <th class="text-center">แผนก</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-employee>
+                            <tr [pSelectableRow]="employee">
+                                <td class="text-center">{{employee.id}}</td>
+                                <td class="text-center">{{employee.name}}</td>
+                                <td class="text-center">{{employee.username}}</td>
+                                <td class="text-center" *ngIf="employee.department == 'owner'">เจ้าของร้าน</td>
+                                <td class="text-center" *ngIf="employee.department == 'pos'">พนักงานขาย</td>
+                                <td class="text-center" *ngIf="employee.department == 'store'">พนักงานคลังสินค้า</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-template>
+                <ng-template pTemplate>
+                    <div class="container my-4">
+                        <div class="row" style="height: 100%; width: 50rem;">
+                            <div class="col-sm-5 d-flex flex-column align-items-center justify-content-center">
+                                <div class="row my-3">
+                                    <div class="col-sm-12">
+                                        <p-image src="{{selectedEmployee.image}}" alt="{{selectedEmployee.image}}"
+                                            width="100%"></p-image>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-7 d-flex align-items-center" style="height: 100%;">
+                                <div class="row">
+                                    <div class="col-sm-6 mt-1">
+                                        <label>รหัสพนักงาน</label>
+                                        <input disabled="true" class="my-1" [(ngModel)]="selectedEmployee.id"
+                                            type="number" pInputText placeholder="กรอกรหัสพนักงาน"
+                                            style="width: 100%;" />
+                                    </div>
+                                    <div class="col-sm-6 mt-1">
+                                        <label>แผนก</label>
+                                        <div class="my-1">
+                                            <p-dropdown [options]="deptOption" [(ngModel)]="selectedEmployee.department"
+                                                optionLabel="label" optionValue="value" [style]="{'width':'100%'}"
+                                                placeholder="เลือกแผนก"></p-dropdown>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 mt-1">
+                                        <label>ชื่อพนักงาน</label>
+                                        <input class="my-1" pInputText placeholder="กรอกชื่อพนักงาน"
+                                            [(ngModel)]="selectedEmployee.name" style="width: 100%;" />
+                                    </div>
+                                    <div class="col-sm-12 mt-1">
+                                        <label>ชื่อผู้ใช้</label>
+                                        <input class="my-1" pInputText placeholder="กรอกชื่อผู้ใช้"
+                                            [(ngModel)]="selectedEmployee.username" style="width: 100%;" />
+                                    </div>
+                                    <div class="col-sm-12 mt-1">
+                                        <label>รหัสผ่าน</label>
+                                        <input disabled="true" class="my-1" pInputText type="password"
+                                            placeholder="กรอกรหัสผ่าน" [(ngModel)]="selectedEmployee.password"
+                                            style="width: 100%;" />
+                                    </div>
+                                    <div class="col-sm-12 mt-1">
+                                        <label>รูปโปรไฟล์</label>
+                                        <input class="my-1" pInputText placeholder="กรอกลิ้งค์รูปภาพ"
+                                            [(ngModel)]="selectedEmployee.image" style="width: 100%;" />
+                                    </div>
+                                    <div *ngIf="selectedEmployee.id != 0">
+                                        <div class="mt-4 d-flex justify-content-between">
+                                            <p-button icon="pi pi-trash" styleClass="p-button-danger"
+                                                (onClick)="deleteEmployee()"></p-button>
+                                            <button pButton type="button" [style]="{'width':'85%'}"
+                                                (click)="updateEmployee()" label="อัพเดตข้อมูลพนักงาน"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </div>
+    </div>
+</div>
+
+<div class="container dialog-add-employee">
+    <p-dialog header="เพิ่มข้อมูลพนักงาน" [(visible)]="isOpenAddDialog" [modal]="true" [draggable]="false"
+        [resizable]="false" [style]="{width: '35vw'}">
+        <ng-template pTemplate="content">
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="row text-center">
+                        <div class="col-sm-12 my-1 px-2">
+                            <p-scrollPanel [style]="{ width: '100%'}">
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-12">
+                                        <label>แผนก</label>
+                                        <div class="my-1">
+                                            <p-dropdown [options]="deptOption" [(ngModel)]="newEmployee!.department"
+                                                optionLabel="label" optionValue="value" [style]="{'width':'100%'}"
+                                                placeholder="เลือกแผนก"></p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-start mt-2">
+                                    <label>ชื่อพนักงาน</label>
+                                    <input class="my-1" pInputText placeholder="กรอกชื่อพนักงาน"
+                                        [(ngModel)]="newEmployee!.name" style="width: 100%;" />
+                                </div>
+
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-12">
+                                        <label>ชื่อผู้ใช้</label>
+                                        <input class="my-1" pInputText placeholder="กรอกชื่อผู้ใช้"
+                                            [(ngModel)]="newEmployee!.username" style="width: 100%;" />
+                                    </div>
+                                </div>
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-12">
+                                        <label>รหัสผ่าน</label>
+                                        <input class="my-1" type="password" pInputText placeholder="กรอกรหัสผ่าน"
+                                            [(ngModel)]="newEmployee!.password" style="width: 100%;" />
+                                    </div>
+                                </div>
+                                <div class="row text-start mt-2">
+                                    <div class="col-sm-12">
+                                        <label>รูปโปรไฟล์</label>
+                                        <input class="my-1" pInputText placeholder="กรอกลิ้งค์รูปภาพ"
+                                            [(ngModel)]="newEmployee!.image" style="width: 100%;" />
+                                    </div>
+                                </div>
+                            </p-scrollPanel>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="row mt-3 ">
+                <div class="col-sm-12 my-1 text-end">
+                    <button pButton type="button" (click)="addEmployee()" label="เพิ่ม"></button>
+                </div>
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>
+
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
